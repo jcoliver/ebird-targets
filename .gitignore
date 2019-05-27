@@ -1,0 +1,8 @@
+ebird-2.0-api-key.txt
+eBird.Rproj
+output
+.Rproj.user
+Target-report.pdf
+data/*-tmp.RData
+data/*_year_list.csv
+data/centers-tucson.csv
