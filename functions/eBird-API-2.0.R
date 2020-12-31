@@ -6,15 +6,30 @@
 ################################################################################
 #' Retrieve recent nearby observations using eBird API 2.0
 #' 
-#' See: https://documenter.getpostman.com/view/664302/ebird-api-20/2HTbHW#b785f3da-1802-d4e0-c447-85cb54abd0bb
+#' @param key character eBird API key
+#' @param lat numeric latitude; use negative values for southern latitudes 
+#' (i.e. -46.86, \emph{not} "46.86 S)
+#' @param lng numeric longitude; use negative values for western 
+#' longitudes (i.e. -72.08, \emph{not} "72.08 W")
+#' @param dist numeric radius (in kilometers) of area from center point 
+#' given by \code{lat} and \code{lng} from which to return recent observations
+#' @param back integer number of days back to search for observations
+#' @param hotspot logical indicating whether or not to restrict results to 
+#' hotspot locations
+#' @param max.tries integer maximum number of query attempts to try
+#' @param timeout.sec integer time to allow before query is aborted
+#' 
+#' @details The function uses the eBird API (see \link{https://documenter.getpostman.com/view/664302/S1ENwy59})
+#' to query recent citings. Queries to the eBird API require a user key; more 
+#' information on obtaining a key can be found at the eBird API documentation.
 RecentNearby <- function(key, lat = 32.241, lng = -110.938, dist = 80, back = 4, 
                          hotspot = "true", max.tries = 5, timeout.sec = 30) {
-  request <- paste0("https://ebird.org/ws2.0/data/obs/geo/recent?",
+  request <- paste0("https://api.ebird.org/v2/data/obs/geo/recent?",
                     "&lat=", lat,
                     "&lng=", lng,
                     "&dist=", distance,
                     "&back=", days.back,
-                    "&hotspot=true",
+                    "&hotspot=", tolower(hotspot),
                     "&key=", key)
   obs.request <- character(0)
   tries <- 0
@@ -24,15 +39,10 @@ RecentNearby <- function(key, lat = 32.241, lng = -110.938, dist = 80, back = 4,
       message(paste0("...attempt ", tries, " failed; requesting again"))
     }
     
-    # Old way, susceptible to timeout
-    # obs.request <- try(expr = fromJSON(txt = request), silent = TRUE)
-
-    # New way, explicitly allowing for longer host resolution times via the 
-    # handle/CONNECTTIMEOUT options of curl::curl
+    # Allow for longer host resolution times via the handle/CONNECTTIMEOUT 
+    # options of curl::curl
     ebird.connection <- curl::curl(request,
                                    handle = curl::new_handle(CONNECTTIMEOUT = timeout.sec))
-    # ebirdJSON <- try(expr = readLines(ebird.connection, warn = FALSE), silent = TRUE)
-    # obs.request <- try(expr = jsonlite::fromJSON(txt = ebirdJSON), silent = TRUE)
     obs.request <- try(expr = {
       ebirdJSON <- readLines(ebird.connection, warn = FALSE)
       jsonlite::fromJSON(txt = ebirdJSON)
@@ -54,7 +64,7 @@ RecentNearby <- function(key, lat = 32.241, lng = -110.938, dist = 80, back = 4,
 RecentNearbySpecies <- function(key, species.code, lat = 32.241, lng = -110.938, 
                                 dist = 80, back = 4, hotspot = "true", 
                                 max.tries = 5, timeout.sec = 30) {
-  request <- paste0("https://ebird.org/ws2.0/data/obs/geo/recent/",
+  request <- paste0("https://api.ebird.org/v2/data/obs/geo/recent/",
                     species.code, "?",
                     "&lat=", lat,
                     "&lng=", lng,
@@ -99,9 +109,11 @@ RecentNearbySpecies <- function(key, species.code, lat = 32.241, lng = -110.938,
 #' @param data data.frame that at has at least a character column of names
 #' @param delim character separator
 #' @param colname name of column with species names
+#' 
 #' @details Names from eBird come in a single column as: "Snow Goose - Anser 
 #' caerulescens". This function provides a means of separating the common (Snow
 #' Goose) from scientific (Anser caerulescens) into two separate columns.
+#' 
 #' @return data.frame with two additional columns, \code{Common} and 
 #' \code{Scientific}
 SplitNames <- function(data, delim = " - ", colname = "Species") {
@@ -116,13 +128,9 @@ SplitNames <- function(data, delim = " - ", colname = "Species") {
 ################################################################################
 #' Drops any species with given patterns in name
 DropPatterns <- function(data, patterns = c(), colname = "comName"){
-  for (p in patterns){
-    pattern.found <- grep(x = data[, colname], pattern = p)
-    if (length(pattern.found) > 0) {
-      data <- data[-pattern.found, ]
-    }
-  }
-  return(data)
+  to.drop <- grep(x = data[, colname], 
+                  pattern = paste0(patterns, collapse = "|"))
+  return(data[-to.drop, ])
 }
 
 ################################################################################
@@ -136,7 +144,7 @@ TargetList <- function(key, center.lat, center.lng, distance = 50, back = 4) {
                              back = back)
   
   # Drop some species, based on patterns in species names
-  drop.patterns <- c("sp.", "/", "Domestic type")
+  drop.patterns <- c("sp.", "/", "Domestic type", "hybrid")
   nearby.obs <- DropPatterns(data = nearby.obs, patterns = drop.patterns)
   
   # Perform set difference, getting list of nearby species *NOT* on current list
@@ -154,7 +162,7 @@ TargetList <- function(key, center.lat, center.lng, distance = 50, back = 4) {
                                          dist = distance, 
                                          back = back)
     nearby.list[[sp.code]] <- nearby.obs.sp
-    Sys.sleep(time = 1.0) # So we're not hammering on eBird's server
+    Sys.sleep(time = 0.5) # So we're not hammering on eBird's server
   }
   
   # Put all results together in single data frame
@@ -207,6 +215,9 @@ CreateSiteMarkdown <- function(target, site.number) {
              "))\n"))
   cat(paste0("### ", target$num.species, " species\n"))
   species <- target$species
+  
+  # Order species by last seen (most recent first)
+  species <- species[order(species$Last.seen, decreasing = TRUE), ]
   
   cat("\n| Species | Count | Last seen |\n")
   cat("|:--------|:-----:|:---------:|\n")

@@ -9,7 +9,6 @@ output: pdf_document
 # TODO: Put numbers on map for each site
 # TODO: Consider % Checklists with target species?
 # TODO: Move timeout to function calls
-# TODO: Close connections
 # TODO: Consider moving parameters to params specification of YAML header
 
 # Load dependancies
