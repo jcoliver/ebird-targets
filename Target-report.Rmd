@@ -22,7 +22,7 @@ source(file = "functions/eBird-API-2.0.R")
 # Load data
 # Remove the .RData files if necessary
 # current.list.file <- "data/ebird_north_america_year_list.csv"
-current.list.file <- "data/ebird_WORLD_year_list.csv"
+current.list.file <- "data/year-lists/ebird_world_year_2021_list.csv"
 centers.file <- "data/centers.csv"
 # centers.file <- "data/centers-tucson.csv"
 output.dir <- "output/"
