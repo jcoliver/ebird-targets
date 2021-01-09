@@ -35,30 +35,37 @@ for (year_list in year_lists) {
   per_date <- per_date %>%
     arrange(Date)
   
-  # Grab the current year, which we may need
-  current_year <- year(per_date$Date[1])
+  # Grab the year for this list, which we may need
+  list_year <- year(per_date$Date[1])
   
   # Check to see if January 1 is there, if not, add it with 0 species as first row
   if (month(per_date$Date[1]) == 1 & day(per_date$Date[1]) == 1) {
-    message(paste0("List already includes observations on 01 January ", current_year))
+    message(paste0("List already includes observations on 01 January ", list_year))
   } else {
-    per_date <- bind_rows(list(Date = as.Date(paste0(current_year, "-01-01")),
+    per_date <- bind_rows(list(Date = as.Date(paste0(list_year, "-01-01")),
                                Num_new = 0),
                           per_date)
-    message(paste0("Added row for 01 January ", current_year))
+    message(paste0("Added row for 01 January ", list_year))
   }
   
   # Check to see if December 31 is there, if not, add it as last row with same 
   # number of species as reported in last date
-  if (month(per_date$Date[nrow(per_date)]) == 12 & day(per_date$Date[nrow(per_date)]) == 31) {
-    message(paste0("List already includes observations on 31 December ", current_year))
+  # Only do this for years other than the current year
+  if (list_year != year(Sys.Date())) {
+    if (month(per_date$Date[nrow(per_date)]) == 12 & day(per_date$Date[nrow(per_date)]) == 31) {
+      message(paste0("List already includes observations on 31 December ", list_year))
+    } else {
+      per_date <- bind_rows(per_date,
+                            list(Date = as.Date(paste0(list_year, "-12-31")),
+                                 Num_new = 0))
+      message(paste0("Added row for 31 December ", list_year, ", with 0 observations."))
+    }
   } else {
+    # For current year, add row for current date
     per_date <- bind_rows(per_date,
-                          list(Date = as.Date(paste0(current_year, "-12-31")),
+                          list(Date = Sys.Date(),
                                Num_new = 0))
-    message(paste0("Added row for 31 December ", current_year, ", with 0 observations."))
   }
-  
   # Calculate cumulative sum of number of new species
   per_date$Cum_sum <- cumsum(per_date$Num_new)
 
@@ -103,6 +110,7 @@ sa_plot <- ggplot(data = mult_years, mapping = aes(x = DOY,
        x = "Date", 
        y = "# Species",
        color = "Year") +
-  theme_minimal()
+  theme_minimal() + 
+  theme(text = element_text(size = 16))
 print(sa_plot)
 ggsave(filename = "output/Sp_accumulation.pdf", plot = sa_plot)
