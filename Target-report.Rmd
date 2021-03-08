@@ -37,7 +37,7 @@ max.targets <- 5 # Maximum number of sites to return per center
 httr::set_config(httr::config(connecttimeout = 30))
 
 # Storage options, mostly for debugging
-save.ebird <- TRUE
+save.ebird <- FALSE
 remove.ebird <- FALSE
 ```
 

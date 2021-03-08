@@ -4,5 +4,6 @@ output
 .Rproj.user
 Target-report.pdf
 data/*-tmp.RData
-data/*_year_list.csv
+data/*/*_list.csv
 data/centers-tucson.csv
+data/target-results.csv

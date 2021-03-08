@@ -104,7 +104,8 @@ sa_plot <- ggplot(data = mult_years, mapping = aes(x = DOY,
                                                  y = Cum_sum,
                                                  color = Year_fac,
                                                  group = Year_fac)) +
-  geom_line() +
+  # geom_line() +
+  geom_step() +
   scale_x_continuous(breaks = doy$DOY, labels = doy$Month) +
   labs(title = paste0("Species accumulation plot, ", min_max_year),
        x = "Date", 
