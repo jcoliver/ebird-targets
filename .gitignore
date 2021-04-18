@@ -6,4 +6,3 @@ Target-report.pdf
 data/*-tmp.RData
 data/*/*_list.csv
 data/centers-tucson.csv
-data/target-results.csv
