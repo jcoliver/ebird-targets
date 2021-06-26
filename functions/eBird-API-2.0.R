@@ -130,7 +130,10 @@ SplitNames <- function(data, delim = " - ", colname = "Species") {
 DropPatterns <- function(data, patterns = c(), colname = "comName"){
   to.drop <- grep(x = data[, colname], 
                   pattern = paste0(patterns, collapse = "|"))
-  return(data[-to.drop, ])
+  if (length(to.drop) > 0) {
+    data <- data[-to.drop, ]
+  }
+  return(data)
 }
 
 ################################################################################
