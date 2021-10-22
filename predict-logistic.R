@@ -60,7 +60,16 @@ model_6 <- glm(seen ~ days_ago + julian_day,
                family = "binomial",
                data = train)
 
-model_7 <- glm(seen ~ days_ago + julian_day + visit,
+model_6w <- glm(seen ~ julian_day, 
+               family = "binomial",
+               data = train,
+               weights = I(1/days_ago))
+
+model_7 <- glm(seen ~ I(count - 1) + days_ago + julian_day, 
+               family = "binomial",
+               data = train)
+
+model_8 <- glm(seen ~ days_ago + julian_day + visit,
                family = "binomial",
                data = train)
 
@@ -70,25 +79,29 @@ anova(model_1, model_4, test = "Chisq")
 anova(model_1, model_5, test = "Chisq")
 anova(model_1, model_6, test = "Chisq")
 anova(model_1, model_7, test = "Chisq")
-anova(model_6, model_7, test = "Chisq")
+anova(model_6, model_8, test = "Chisq")
 
 # predicted_probs <- predict(model_2, newdata = results, type = "response")
 
 test <- full_results %>%
   filter(date == max(date))
 
-predicted_probs <- predict(model_6, newdata = test, type = "response")
+# predicted_probs <- predict(model_5, newdata = test, type = "response")
+# predicted_probs <- predict(model_6, newdata = test, type = "response")
+# predicted_probs <- predict(model_7, newdata = test, type = "response")
+predicted_probs <- predict(model_6w, newdata = test, type = "response")
 
 predicted_species <- sum(predicted_probs)
-# 23
+# 2.47
 observed_species <- sum(test$seen)
-# 23
+# 2
 
 # Probability of seeing a species:
 # p = 1/(1 - e^-(b0 + b1x1 + b2x2))
 # OR, 
 # p = 1/(1 - e^-(l))
 # where l is the log-odds
+
 
 # Look at effect of visit on number new species seen
 visit_plot <- full_results %>%
@@ -101,3 +114,21 @@ visit_plot <- full_results %>%
   xlab("Visit #") +
   ylab("New species found")
 visit_plot
+
+# Plotting model 6
+model_6_plot <- full_results %>%
+  group_by(location, date) %>%
+  dplyr::summarise(new_seen = sum(seen)) %>%
+  ungroup() %>%
+  mutate(julian_day = lubridate::yday(date)) %>%
+  ggplot(mapping = aes(x = julian_day, y = new_seen)) +
+  # geom_jitter() +
+  geom_point() +
+  geom_smooth() +
+  xlab("Julian day") +
+  ylab("New species found")
+model_6_plot
+
+model_6 <- glm(seen ~ days_ago + julian_day, 
+               family = "binomial",
+               data = train)

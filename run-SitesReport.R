@@ -7,11 +7,11 @@ rm(list = ls())
 
 ################################################################################
 
-# devtools::install_github(repo = "https://github.com/jcoliver/lifeR")
+# remotes::install_github(repo = "https://github.com/jcoliver/lifeR", build_vignettes = TRUE, force = TRUE)
 library(lifeR)
 
 # File with lat, long, and names of centers
-center_file <- "data/centers.csv"
+center_file <- "../ebird-targets/data/centers.csv"
 
 # File with eBird API key
 key_file <- "../ebird-targets/ebird-key.txt"
