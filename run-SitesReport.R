@@ -7,7 +7,7 @@ rm(list = ls())
 
 ################################################################################
 
-# remotes::install_github(repo = "https://github.com/jcoliver/lifeR", build_vignettes = TRUE, force = TRUE)
+# remotes::install_github(repo = "jcoliver/lifeR", build_vignettes = TRUE, force = TRUE)
 library(lifeR)
 
 # File with lat, long, and names of centers
@@ -17,7 +17,7 @@ center_file <- "../ebird-targets/data/centers.csv"
 key_file <- "../ebird-targets/ebird-key.txt"
 
 # File with year list
-list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2021_list.csv"
+list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2022_list.csv"
 
 # Destination information for report
 report_filename <- paste0("Sites-report-", Sys.Date())

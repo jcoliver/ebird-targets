@@ -89,7 +89,7 @@ test <- full_results %>%
 # predicted_probs <- predict(model_5, newdata = test, type = "response")
 # predicted_probs <- predict(model_6, newdata = test, type = "response")
 # predicted_probs <- predict(model_7, newdata = test, type = "response")
-predicted_probs <- predict(model_6w, newdata = test, type = "response")
+predicted_probs <- predict(model_3, newdata = test, type = "response")
 
 predicted_species <- sum(predicted_probs)
 # 2.47
