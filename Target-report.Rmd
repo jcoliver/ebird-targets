@@ -28,7 +28,7 @@ centers.file <- "data/centers.csv"
 output.dir <- "output/"
 
 # Set values for analysis
-key_file <- "../lifeR/ebird-key.txt"
+key_file <- "ebird-key.txt"
 key <- scan(file = key_file, what = "character")
 distance <- 50 # Max distance is 50 km
 days.back <- 4
