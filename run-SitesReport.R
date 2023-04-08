@@ -3,11 +3,10 @@
 # jcoliver@email.arizona.edu
 # 2021-02-11
 
-rm(list = ls())
-
 ################################################################################
 
 # remotes::install_github(repo = "jcoliver/lifeR", build_vignettes = TRUE, force = TRUE)
+# install.packages("lifeR")
 library(lifeR)
 
 # File with lat, long, and names of centers
@@ -17,7 +16,7 @@ center_file <- "../ebird-targets/data/centers.csv"
 key_file <- "../ebird-targets/ebird-key.txt"
 
 # File with year list
-list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2022_list.csv"
+list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2023_list.csv"
 
 # Destination information for report
 report_filename <- paste0("Sites-report-", Sys.Date())
@@ -34,7 +33,8 @@ key <- scan(file = key_file, what = "character")
 # Read in file with species that have been seen
 seen <- read.csv(file = list_file)
 # Pull out the common name
-my_species <- lifeR::SplitNames(x = seen$Species)$Common
+# my_species <- lifeR::SplitNames(x = seen$Scientific.Name)$Common
+my_species <- seen$Common.Name
 
 # Generate the report
 report <- lifeR::SitesReport(centers = locs,
