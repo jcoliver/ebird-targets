@@ -16,7 +16,7 @@ center_file <- "../ebird-targets/data/centers.csv"
 key_file <- "../ebird-targets/ebird-key.txt"
 
 # File with year list
-list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2023_list.csv"
+list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2024_list.csv"
 
 # Destination information for report
 report_filename <- paste0("Sites-report-", Sys.Date())
