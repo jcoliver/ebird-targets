@@ -22,8 +22,9 @@ list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2025_list.csv"
 report_filename <- paste0("Sites-report-", Sys.Date())
 report_directory <- "~/Desktop"
 
-# Not likely any edits necessary below here
+# Load in center file; subset as necessary
 centers <- read.csv(file = center_file)
+centers <- centers[c(6,7), ]
 # Extract relevant information
 locs <- as.matrix(centers[, c(2,3)])
 loc_names <- centers$center.name
