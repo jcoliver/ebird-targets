@@ -3,8 +3,6 @@
 # jcoliver@email.arizona.edu
 # 2020-12-31
 
-rm(list = ls())
-
 ################################################################################
 library(readr)     # read in files
 library(dplyr)     # general data wrangling
@@ -111,7 +109,9 @@ sa_plot <- ggplot(data = mult_years, mapping = aes(x = DOY,
        x = "Date", 
        y = "# Species",
        color = "Year") +
-  theme_minimal() + 
-  theme(text = element_text(size = 16))
-print(sa_plot)
+  theme_bw() +
+  theme(text = element_text(size = 9),
+        legend.text = element_text(size = 6),
+        legend.key.spacing.y = unit(-3.0, "mm"))
+sa_plot
 ggsave(filename = "output/Sp_accumulation.pdf", plot = sa_plot)
