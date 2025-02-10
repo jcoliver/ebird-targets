@@ -5,6 +5,7 @@
 
 ################################################################################
 
+# remotes::install_github(repo = "jcoliver/lifeR", build_vignettes = TRUE, force = TRUE)
 # install.packages("lifeR")
 library(lifeR)
 
@@ -15,10 +16,10 @@ center_file <- "../ebird-targets/data/centers.csv"
 key_file <- "../ebird-targets/ebird-key.txt"
 
 # File with year list
-list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2024_list.csv"
+list_file <- "../ebird-targets/data/year-lists/ebird_world_year_2025_list.csv"
 
 # Destination information for report
-report_filename <- paste0("Sites-report-", Sys.Date())
+report_filename <- paste0("Sites-report-TEST-", Sys.Date())
 report_directory <- "~/Desktop"
 
 # Not likely any edits necessary below here
