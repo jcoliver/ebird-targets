@@ -9,6 +9,11 @@
 # install.packages("lifeR")
 library(lifeR)
 
+# Settings for this report
+max_sites <- 5
+dist <- 20 # 50
+back <- 7 # 4
+
 # File with lat, long, and names of centers
 center_file <- "../ebird-targets/data/centers.csv"
 
@@ -24,7 +29,15 @@ report_directory <- "~/Desktop"
 
 # Load in center file; subset as necessary
 centers <- read.csv(file = center_file)
-centers <- centers[c(6,7), ]
+# Pull out rows of centers of interest
+# Tucson area
+centers <- centers[1:3, ]
+# White Mountains
+# centers <- centers[4:5, ]
+# Corvallis
+# centers <- centers[c(6, 8), ]
+# Carson City
+# centers <- centers[10, ]
 # Extract relevant information
 locs <- as.matrix(centers[, c(2,3)])
 loc_names <- centers$center.name
@@ -45,4 +58,7 @@ report <- lifeR::SitesReport(centers = locs,
                              report_dir = report_directory,
                              report_format = "html",
                              species_seen = my_species,
-                             messages = "verbose")
+                             messages = "verbose",
+                             max_sites = max_sites,
+                             dist = dist,
+                             back = back)
